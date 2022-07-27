@@ -14,13 +14,13 @@ clock = pygame.time.Clock()
 #so the game can run smoothly
 
 #--------------------IMAGE LOAD SECTION-------------------------------
+
 player_spaceship_image = pygame.image.load(os.path.join("Assets","player_spaceship.png"))
 player_width,player_height = 50,40
 player_spaceship = pygame.transform.scale(player_spaceship_image,(player_width,player_height))
 
+#--------------------------CLASS ASSIGNMENT-----------------------------------------------------
 
-
-#class example (self value is very important)
 class Entity():
     def __init__(self,x,y,movex,movey):
         self.x = x
@@ -28,9 +28,22 @@ class Entity():
         self.movex = movex
         self.movey = movey
 
-player = Entity(20,20,0,0)
+player = Entity(20,650,0,0)
+playerspeed = 5
 
-#first loading of screen (will want to upate)
+#----player projectiles----
+playerbullets = []
+playermaxbullets = 3
+playerbulletwidth = 10
+playerbulletheight= 10
+def playerbulletrender(bulletlist):
+    for bullet in bulletlist:
+        pygame.draw.rect(mainscreen,(255,255,255),(bullet[0]-playerbulletwidth/2,bullet[1],playerbulletwidth,playerbulletheight))
+        bullet[1] -= 5
+        if bullet[1] < 0:
+            bulletlist.remove(bullet)
+
+#-------------------INITIAL LOADING---------------------------------------
 mainscreen.fill(blue)
 mainscreen.blit(player_spaceship, (player.x,player.y))
 pygame.display.update()
@@ -44,50 +57,41 @@ while live:
         if event.type == pygame.QUIT:
             live = False   
 
-        #----------BASIC MOVEMENT-----------------------------
+#------------------------BASIC INPUTS-----------------------------
 
-        if event.type == pygame.KEYDOWN:    #records key presses
-            if event.key == pygame.K_w:
-                player.movey -= 1
-            if event.key == pygame.K_s:
-                player.movey += 1
-            
-            if event.key == pygame.K_a:
+        if event.type == pygame.KEYDOWN:    #records key presses            
+            if event.key == pygame.K_q:
                 player.movex -= 1
-            if event.key == pygame.K_d:
+            if event.key == pygame.K_e:
                 player.movex += 1
+            if event.key == pygame.K_w:
+                if len(playerbullets) < playermaxbullets:
+                    playerbullets.append([player.x + player_width//2, player.y])
 
         if event.type == pygame.KEYUP:  #records key unpresses
-            if event.key == pygame.K_w:
-                player.movey += 1
-            if event.key == pygame.K_s:
-                player.movey -= 1
-
-            if event.key == pygame.K_a:
+            if event.key == pygame.K_q:
                 player.movex += 1
-            if event.key == pygame.K_d:
+            if event.key == pygame.K_e:
                 player.movex -= 1
 
-    #---------------UPDATE PLAYER POSITION----------------------------    
+    #update player position
+    player.x = player.x + (playerspeed*player.movex)
+    player.y = player.y + (playerspeed*player.movey)
 
-    player.x = player.x + (10*player.movex)
-    player.y = player.y + (10*player.movey)
-
-    #-------------CONTAIN PLAYER TO SCREEN----------------------------
-
-    if player.y < 0:
-        player.y = 0
-    if player.y > HEIGHT - player_height:
-        player.y = HEIGHT - player_height
+    #contain player to screen
     if player.x < 0:
         player.x = 0
-    if player.x > WIDTH - player_width:
-        player.x = WIDTH - player_width
+    if player.x > 1000 - player_width:
+        player.x = 1000 - player_width
 
     #---------------UPDATE SCREEN------------------------------------
 
     mainscreen.fill(blue)
+    pygame.draw.rect(mainscreen,(0,0,0),(0,0,1000,700)) #main game window
+    pygame.draw.rect(mainscreen,(10,10,10),(0,700,1000,200)) #systems bar
+    pygame.draw.rect(mainscreen,(15,15,15),(1000,0,500,900)) #metadata bar
     mainscreen.blit(player_spaceship, (player.x,player.y))
+    playerbulletrender(playerbullets)
 
     pygame.display.update()
 
