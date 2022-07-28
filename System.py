@@ -16,29 +16,45 @@ clock = pygame.time.Clock()
 #--------------------IMAGE LOAD SECTION-------------------------------
 
 #player sprite
-player_spaceship_image = pygame.image.load(os.path.join("Assets","player_spaceship.png"))
-player_width,player_height = 50,40
-player_spaceship = pygame.transform.scale(player_spaceship_image,(player_width,player_height))
 
-#enemy spaceship sprites
-enemy_spaceship_image_1 = pygame.image.load(os.path.join("Assets","enemy_spaceship_1.png"))
-enemy1_width,enemy1_height = 34,40
-enemy_spaceship_image_2 = pygame.image.load(os.path.join("Assets","enemy_spaceship_2.png"))
-enemy2_width,enemy2_height = 40,40
-enemy_spaceship_image_3 = pygame.image.load(os.path.join("Assets","enemy_spaceship_3.png"))
-enemy3_width,enemy3_height = 46,40
+#----enemy class for loading images----
+class Entity():
+    def __init__(self,image,width,height):
+        self.image = pygame.image.load(os.path.join("Assets",image))
+        self.width = width
+        self.height = height
+        self.sprite = pygame.transform.scale(self.image,(self.width,self.height))
 
+enemy_1 = Entity("enemy_spaceship_1.png",34,40)
+enemy_2 = Entity("enemy_spaceship_2.png",40,40)
+enemy_3 = Entity("enemy_spaceship_3.png",46,40)
 
 #--------------------------CLASS ASSIGNMENT-----------------------------------------------------
 
+#----enemy class for loading images----
 class Entity():
-    def __init__(self,x,y,movex,movey):
+    def __init__(self,image,width,height):
+        self.image = pygame.image.load(os.path.join("Assets",image))
+        self.width = width
+        self.height = height
+        self.sprite = pygame.transform.scale(self.image,(self.width,self.height))
+
+enemy_1 = Entity("enemy_spaceship_1.png",34,40)
+enemy_2 = Entity("enemy_spaceship_2.png",40,40)
+enemy_3 = Entity("enemy_spaceship_3.png",46,40)
+
+class Player(Entity):
+    def __init__(self,image,width,height,x,y,movex,movey):
+        self.image = pygame.image.load(os.path.join("Assets",image))
+        self.width = width
+        self.height = height
+        self.sprite = pygame.transform.scale(self.image,(self.width,self.height))
         self.x = x
         self.y = y
         self.movex = movex
         self.movey = movey
 
-player = Entity(20,650,0,0)
+player = Player("player_spaceship.png",50,40,20,650,0,0)
 playerspeed = 5
 
 #----player projectiles----
@@ -57,8 +73,13 @@ def playerbulletrender(bulletlist):
 
 #this will probably change to some other load screen
 mainscreen.fill(black)
-mainscreen.blit(player_spaceship, (player.x,player.y))
+mainscreen.blit(player.image, (player.x,player.y))
+pygame.draw.rect(mainscreen,(0,0,0),(0,0,1000,700)) #main game window
+pygame.draw.rect(mainscreen,(10,10,10),(0,700,1000,200)) #systems bar
+pygame.draw.rect(mainscreen,(15,15,15),(1000,0,500,900)) #metadata bar
 pygame.display.update()
+
+
 
 #LIVE INPUT, will probably be run at the end of the code
 def main():
@@ -79,7 +100,7 @@ def main():
                     player.movex += 1
                 if event.key == pygame.K_w:
                     if len(playerbullets) < playermaxbullets:
-                        playerbullets.append([player.x + player_width//2, player.y])
+                        playerbullets.append([player.x + player.width//2, player.y])
 
             if event.type == pygame.KEYUP:  #records key unpresses
                 if event.key == pygame.K_q:
@@ -94,18 +115,15 @@ def main():
         #contain player to main screen
         if player.x < 0:
             player.x = 0
-        if player.x > 1000 - player_width:
-            player.x = 1000 - player_width
+        if player.x > 1000 - player.width:
+            player.x = 1000 - player.width
 
         #---------------UPDATE SCREEN------------------------------------
 
-        pygame.draw.rect(mainscreen,(0,0,0),(0,0,1000,700)) #main game window
-        pygame.draw.rect(mainscreen,(10,10,10),(0,700,1000,200)) #systems bar
-        pygame.draw.rect(mainscreen,(15,15,15),(1000,0,500,900)) #metadata bar
-        mainscreen.blit(player_spaceship, (player.x,player.y))
+        pygame.draw.rect(mainscreen,(0,0,0),(0,0,1000,700))
+        mainscreen.blit(player.image, (player.x,player.y))
         playerbulletrender(playerbullets)
-
-        pygame.display.update()
+        pygame.display.update(0,0,1000,700)
 
 main()
 pygame.quit()
