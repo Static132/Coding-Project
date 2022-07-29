@@ -13,22 +13,6 @@ pygame.display.set_caption("SYSTEM")
 clock = pygame.time.Clock()
 #so the game can run smoothly
 
-#--------------------IMAGE LOAD SECTION-------------------------------
-
-#player sprite
-
-#----enemy class for loading images----
-class Entity():
-    def __init__(self,image,width,height):
-        self.image = pygame.image.load(os.path.join("Assets",image))
-        self.width = width
-        self.height = height
-        self.sprite = pygame.transform.scale(self.image,(self.width,self.height))
-
-enemy_1 = Entity("enemy_spaceship_1.png",34,40)
-enemy_2 = Entity("enemy_spaceship_2.png",40,40)
-enemy_3 = Entity("enemy_spaceship_3.png",46,40)
-
 #--------------------------CLASS ASSIGNMENT-----------------------------------------------------
 
 #----enemy class for loading images----
@@ -39,9 +23,9 @@ class Entity():
         self.height = height
         self.sprite = pygame.transform.scale(self.image,(self.width,self.height))
 
-enemy_1 = Entity("enemy_spaceship_1.png",34,40)
-enemy_2 = Entity("enemy_spaceship_2.png",40,40)
-enemy_3 = Entity("enemy_spaceship_3.png",46,40)
+scout = Entity("enemy_spaceship_1.png",34,40)
+carrier = Entity("enemy_spaceship_2.png",40,40)
+attacker = Entity("enemy_spaceship_3.png",46,40)
 
 class Player(Entity):
     def __init__(self,image,width,height,x,y,movex,movey):
@@ -57,6 +41,8 @@ class Player(Entity):
 player = Player("player_spaceship.png",50,40,20,650,0,0)
 playerspeed = 5
 
+#-------------------------GAME FUNCTIONS--------------------------------------
+
 #----player projectiles----
 playerbullets = []
 playermaxbullets = 3
@@ -68,6 +54,49 @@ def playerbulletrender(bulletlist):
         bullet[1] -= 5
         if bullet[1] < 0 - playerbulletheight:
             bulletlist.remove(bullet)
+
+
+#----LEVEL LOADING----
+def loadlevel(level_list):
+    level = level_list
+    spawnpoint = []
+    for y_axis in range(50,200,50):
+        for x_axis in range(50,1000,50):
+            spawnpoint.append([x_axis,y_axis])
+
+    for enemy in range(0,len(level)):
+        spawnpoint[enemy] = [level[enemy],spawnpoint[enemy]]
+    
+    for empty in range(len(level),57):
+            spawnpoint[empty] = "0"
+    
+    while len(spawnpoint) != len(level_list):
+        for blank in spawnpoint:
+            if blank == "0":
+                spawnpoint.remove(blank)
+    return spawnpoint
+
+#example spawnpoint = [scout,1],[x,y]
+
+
+level_1 = loadlevel([
+    [1,1],[2,1],[1,1],[1,1],[1,1],[1,1],
+    [1,1],[1,1],[1,1],[1,1],[1,1],[1,1],
+    [1,1],[1,1],[1,1],[1,1],[1,1],[2,1],
+    [1,1],["buffer"]
+])
+
+#level renderer, repeat once level has been loaded
+def levelrender(spawnlist):
+    for enemy in range(0,(len(spawnlist)-1)):
+        if ((spawnlist[enemy])[0])[0] == 1:
+            mainscreen.blit(scout.image,((spawnlist[enemy][1])[0] - scout.width/2 ,(spawnlist[enemy][1])[1]))
+        if ((spawnlist[enemy])[0])[0] == 2:
+            mainscreen.blit(carrier.image,((spawnlist[enemy][1])[0] - carrier.width/2 ,(spawnlist[enemy][1])[1]))
+        if ((spawnlist[enemy])[0])[0] == 3:
+            mainscreen.blit(attacker.image,((spawnlist[enemy][1])[0] - attacker.width/2 ,(spawnlist[enemy][1])[1]))
+
+current_level = level_1
 
 #-------------------INITIAL LOADING---------------------------------------
 
@@ -122,6 +151,7 @@ def main():
 
         pygame.draw.rect(mainscreen,(0,0,0),(0,0,1000,700))
         mainscreen.blit(player.image, (player.x,player.y))
+        levelrender(current_level)
         playerbulletrender(playerbullets)
         pygame.display.update(0,0,1000,700)
 
