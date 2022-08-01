@@ -83,12 +83,12 @@ level_1 = loadlevel([
     [1,1],[2,1],[1,1],[1,1],[1,1],[1,1],
     [1,1],[1,1],[1,1],[1,1],[1,1],[1,1],
     [1,1],[1,1],[1,1],[1,1],[1,1],[2,1],
-    [1,1],["buffer"]
+    [1,1]
 ])
 
 #level renderer, repeat once level has been loaded
 def levelrender(spawnlist):
-    for enemy in range(0,(len(spawnlist)-1)):
+    for enemy in range(0,(len(spawnlist))):
         if ((spawnlist[enemy])[0])[0] == 1:
             mainscreen.blit(scout.image,((spawnlist[enemy][1])[0] - scout.width/2 ,(spawnlist[enemy][1])[1]))
         if ((spawnlist[enemy])[0])[0] == 2:
