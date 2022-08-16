@@ -48,12 +48,6 @@ playerbullets = []
 playermaxbullets = 3
 playerbulletwidth = 10
 playerbulletheight= 10
-def playerbulletrender(bulletlist):
-    for bullet in bulletlist:
-        pygame.draw.rect(mainscreen,(255,255,255),(bullet[0]-playerbulletwidth/2,bullet[1],playerbulletwidth,playerbulletheight))
-        bullet[1] -= 5
-        if bullet[1] < 0 - playerbulletheight:
-            bulletlist.remove(bullet)
 
 
 #----LEVEL LOADING----
@@ -81,13 +75,13 @@ def loadlevel(level_list):
 
 level_1 = loadlevel([
     [1,1],[2,1],[1,1],[1,1],[1,1],[1,1],
-    [1,1],[1,1],[1,1],[1,1],[1,1],[1,1],
+    [1,1],[1,1],[1,1],[3,1],[1,1],[1,1],
     [1,1],[1,1],[1,1],[1,1],[1,1],[2,1],
     [1,1]
 ])
 
 #level renderer, repeat once level has been loaded
-def levelrender(spawnlist):
+def levelrender(spawnlist,bulletlist):
     for enemy in range(0,(len(spawnlist))):
         if ((spawnlist[enemy])[0])[0] == 1:
             mainscreen.blit(scout.image,((spawnlist[enemy][1])[0] - scout.width/2 ,(spawnlist[enemy][1])[1]))
@@ -95,6 +89,11 @@ def levelrender(spawnlist):
             mainscreen.blit(carrier.image,((spawnlist[enemy][1])[0] - carrier.width/2 ,(spawnlist[enemy][1])[1]))
         if ((spawnlist[enemy])[0])[0] == 3:
             mainscreen.blit(attacker.image,((spawnlist[enemy][1])[0] - attacker.width/2 ,(spawnlist[enemy][1])[1]))
+    for bullet in bulletlist:
+        pygame.draw.rect(mainscreen,(255,255,255),(bullet[0]-playerbulletwidth/2,bullet[1],playerbulletwidth,playerbulletheight))
+        bullet[1] -= 5
+        if bullet[1] < 0 - playerbulletheight:
+            bulletlist.remove(bullet)
 
 current_level = level_1
 
@@ -151,8 +150,7 @@ def main():
 
         pygame.draw.rect(mainscreen,(0,0,0),(0,0,1000,700))
         mainscreen.blit(player.image, (player.x,player.y))
-        levelrender(current_level)
-        playerbulletrender(playerbullets)
+        levelrender(current_level,playerbullets)
         pygame.display.update(0,0,1000,700)
 
 main()
