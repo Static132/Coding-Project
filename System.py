@@ -80,15 +80,36 @@ level_1 = loadlevel([
     [1,1]
 ])
 
-#level renderer, repeat once level has been loaded
+#----------level renderer, repeat once level has been loaded----------------
 def levelrender(spawnlist,bulletlist):
-    for enemy in range(0,(len(spawnlist))):
-        if ((spawnlist[enemy])[0])[0] == 1:
-            mainscreen.blit(scout.image,((spawnlist[enemy][1])[0] - scout.width/2 ,(spawnlist[enemy][1])[1]))
-        if ((spawnlist[enemy])[0])[0] == 2:
-            mainscreen.blit(carrier.image,((spawnlist[enemy][1])[0] - carrier.width/2 ,(spawnlist[enemy][1])[1]))
-        if ((spawnlist[enemy])[0])[0] == 3:
-            mainscreen.blit(attacker.image,((spawnlist[enemy][1])[0] - attacker.width/2 ,(spawnlist[enemy][1])[1]))
+    for enemy in spawnlist:
+        if (enemy[0])[0] == 1:
+            sprite = scout
+        elif (enemy[0])[0] == 2:
+            sprite = carrier
+        elif (enemy[0])[0] == 3:
+            sprite = attacker
+
+        spriterect = [(enemy[1])[0] - sprite.width/2 ,(enemy[1])[1]]
+
+        mainscreen.blit(sprite.image, spriterect)
+
+        #-----------bullet collision----------
+        for bullet in bulletlist:
+            if bullet[0] > spriterect[0]:
+                print("1")
+                if bullet[0] < spriterect[0] + sprite.width:
+                    print("2")
+                    if bullet[1] < spriterect[1] + sprite.height:
+                        print("3")
+                        if bullet[1] > spriterect[1]:
+                            print("4")
+                            (enemy[0])[1] -= 1
+                            if (enemy[0])[1] == 0:
+                                print("removed")
+                                spawnlist.remove(enemy)
+                            bulletlist.remove(bullet)
+
     for bullet in bulletlist:
         pygame.draw.rect(mainscreen,(255,255,255),(bullet[0]-playerbulletwidth/2,bullet[1],playerbulletwidth,playerbulletheight))
         bullet[1] -= 5
@@ -154,4 +175,4 @@ def main():
         pygame.display.update(0,0,1000,700)
 
 main()
-pygame.quit()
+pygame.quit
