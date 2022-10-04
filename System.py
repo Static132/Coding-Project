@@ -17,15 +17,16 @@ clock = pygame.time.Clock()
 
 #----enemy class for loading images----
 class Entity():
-    def __init__(self,image,width,height):
+    def __init__(self,image,width,height,damage):
         self.image = pygame.image.load(os.path.join("Assets",image))
         self.width = width
         self.height = height
         self.sprite = pygame.transform.scale(self.image,(self.width,self.height))
+        self.damage = damage
 
-scout = Entity("enemy_spaceship_1.png",34,40)
-carrier = Entity("enemy_spaceship_2.png",40,40)
-attacker = Entity("enemy_spaceship_3.png",46,40)
+scout = Entity("enemy_spaceship_1.png",34,40,1)
+carrier = Entity("enemy_spaceship_2.png",40,40,2)
+attacker = Entity("enemy_spaceship_3.png",46,40,3)
 
 class Player(Entity):
     def __init__(self,image,width,height,x,y,movex,movey):
@@ -137,7 +138,11 @@ def main():
 
     #------------------------BASIC INPUTS-----------------------------
 
-            if event.type == pygame.KEYDOWN:    #records key presses            
+            if event.type == pygame.KEYDOWN:    #records key presses  
+                    
+                if event.key == pygame.K_ESCAPE:
+                    live = False
+
                 if event.key == pygame.K_q:
                     player.movex -= 1
                 if event.key == pygame.K_e:
