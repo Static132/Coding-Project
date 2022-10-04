@@ -97,16 +97,11 @@ def levelrender(spawnlist,bulletlist):
         #-----------bullet collision----------
         for bullet in bulletlist:
             if bullet[0] > spriterect[0]:
-                print("1")
                 if bullet[0] < spriterect[0] + sprite.width:
-                    print("2")
                     if bullet[1] < spriterect[1] + sprite.height:
-                        print("3")
                         if bullet[1] > spriterect[1]:
-                            print("4")
                             (enemy[0])[1] -= 1
                             if (enemy[0])[1] == 0:
-                                print("removed")
                                 spawnlist.remove(enemy)
                             bulletlist.remove(bullet)
 
