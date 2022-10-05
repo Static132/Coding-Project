@@ -5,7 +5,7 @@ black = (0,0,0)
 WIDTH = 1500
 HEIGHT = 900
 mainscreen = pygame.display.set_mode((WIDTH,HEIGHT))
-text = pygame.font.SysFont("systemtextfont", 30)
+title_text = pygame.font.SysFont("systemtextfont", 100)
 #sets the width and height of the game
 
 pygame.display.set_caption("SYSTEM")
@@ -122,7 +122,7 @@ mainscreen.blit(player.image, (player.x,player.y))
 pygame.draw.rect(mainscreen,(0,0,0),(0,0,1000,700)) #main game window
 pygame.draw.rect(mainscreen,(10,10,10),(0,700,1000,200)) #systems bar
 pygame.draw.rect(mainscreen,(15,15,15),(1000,0,500,900)) #metadata bar
-mainscreen.blit(text.render('SYSTEM', False, (255, 255, 255)),(1000,0,)) # title text
+mainscreen.blit(title_text.render('SYSTEM', False, (255, 255, 255)),(1010,10,)) # title text
 pygame.display.update()
 current_level = level_1
 
@@ -160,7 +160,6 @@ def main():
 
         #update player position
         player.x = player.x + (playerspeed*player.movex)
-        player.y = player.y + (playerspeed*player.movey)
 
         #contain player to main screen
         if player.x < 0:
