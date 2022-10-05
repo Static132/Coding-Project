@@ -1,9 +1,11 @@
 import pygame
+pygame.font.init()
 import os
 black = (0,0,0)
 WIDTH = 1500
 HEIGHT = 900
 mainscreen = pygame.display.set_mode((WIDTH,HEIGHT))
+text = pygame.font.SysFont("systemtextfont", 30)
 #sets the width and height of the game
 
 pygame.display.set_caption("SYSTEM")
@@ -112,8 +114,6 @@ def levelrender(spawnlist,bulletlist):
         if bullet[1] < 0 - playerbulletheight:
             bulletlist.remove(bullet)
 
-current_level = level_1
-
 #-------------------INITIAL LOADING---------------------------------------
 
 #this will probably change to some other load screen
@@ -122,11 +122,12 @@ mainscreen.blit(player.image, (player.x,player.y))
 pygame.draw.rect(mainscreen,(0,0,0),(0,0,1000,700)) #main game window
 pygame.draw.rect(mainscreen,(10,10,10),(0,700,1000,200)) #systems bar
 pygame.draw.rect(mainscreen,(15,15,15),(1000,0,500,900)) #metadata bar
+mainscreen.blit(text.render('SYSTEM', False, (255, 255, 255)),(1000,0,)) # title text
 pygame.display.update()
+current_level = level_1
 
 
-
-#LIVE INPUT, will probably be run at the end of the code
+#---------------------LIVE INPUT, will probably be run at the end of the code-----------------------
 def main():
     live = True
     while live:
