@@ -75,16 +75,15 @@ def loadlevel(level_list):
 
 #example spawnpoint = [scout,1],[x,y]
 
-
-level_1 = loadlevel([
-    [1,1],[2,1],[1,1],[1,1],[1,1],[1,1],
-    [1,1],[1,1],[1,1],[3,1],[1,1],[1,1],
-    [1,1],[1,1],[1,1],[1,1],[1,1],[2,1],
-    [1,1]
-])
-
+level = 1
 #----------level renderer, repeat once level has been loaded----------------
-def levelrender(spawnlist,bulletlist):
+def levelrender(spawnlist,bulletlist,level):
+    if spawnlist == []:
+        level += 1
+        if level == 2:
+            spawnlist = loadlevel([[1,1],[2,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[3,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[2,1],[1,1],
+            [1,1],[2,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[3,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[2,1],[1,1]])
+
     for enemy in spawnlist:
         if (enemy[0])[0] == 1:
             sprite = scout
@@ -124,7 +123,12 @@ pygame.draw.rect(mainscreen,(10,10,10),(0,700,1000,200)) #systems bar
 pygame.draw.rect(mainscreen,(15,15,15),(1000,0,500,900)) #metadata bar
 mainscreen.blit(title_text.render('SYSTEM', False, (255, 255, 255)),(1010,10,)) # title text
 pygame.display.update()
-current_level = level_1
+current_level = loadlevel([
+    [1,1],[2,1],[1,1],[1,1],[1,1],[1,1],
+    [1,1],[1,1],[1,1],[3,1],[1,1],[1,1],
+    [1,1],[1,1],[1,1],[1,1],[1,1],[2,1],
+    [1,1]
+])
 
 
 #---------------------LIVE INPUT, will probably be run at the end of the code-----------------------
@@ -171,7 +175,7 @@ def main():
 
         pygame.draw.rect(mainscreen,(0,0,0),(0,0,1000,700))
         mainscreen.blit(player.image, (player.x,player.y))
-        levelrender(current_level,playerbullets)
+        levelrender(current_level,playerbullets,level)
         pygame.display.update(0,0,1000,700)
 
 main()
