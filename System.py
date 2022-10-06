@@ -48,7 +48,7 @@ playerspeed = 5
 
 #----player projectiles----
 playerbullets = []
-playermaxbullets = 3
+playermaxbullets = 100
 playerbulletwidth = 10
 playerbulletheight= 10
 
@@ -75,16 +75,22 @@ def loadlevel(level_list):
 
 #example spawnpoint = [scout,1],[x,y]
 
+
 level = 1
+
 #----------level renderer, repeat once level has been loaded----------------
-def levelrender(spawnlist,bulletlist,level):
-    if spawnlist == []:
+def levelrender():
+    global level
+    global current_level
+    global playerbullets
+    if current_level == []:
         level += 1
         if level == 2:
-            spawnlist = loadlevel([[1,1],[2,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[3,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[2,1],[1,1],
+            level += 1
+            current_level = loadlevel([[1,1],[2,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[3,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[2,1],[1,1],
             [1,1],[2,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[3,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[2,1],[1,1]])
 
-    for enemy in spawnlist:
+    for enemy in current_level:
         if (enemy[0])[0] == 1:
             sprite = scout
         elif (enemy[0])[0] == 2:
@@ -97,21 +103,21 @@ def levelrender(spawnlist,bulletlist,level):
         mainscreen.blit(sprite.image, spriterect)
 
         #-----------bullet collision----------
-        for bullet in bulletlist:
+        for bullet in playerbullets:
             if bullet[0] > spriterect[0]:
                 if bullet[0] < spriterect[0] + sprite.width:
                     if bullet[1] < spriterect[1] + sprite.height:
                         if bullet[1] > spriterect[1]:
                             (enemy[0])[1] -= 1
                             if (enemy[0])[1] == 0:
-                                spawnlist.remove(enemy)
-                            bulletlist.remove(bullet)
+                                current_level.remove(enemy)
+                            playerbullets.remove(bullet)
 
-    for bullet in bulletlist:
+    for bullet in playerbullets:
         pygame.draw.rect(mainscreen,(255,255,255),(bullet[0]-playerbulletwidth/2,bullet[1],playerbulletwidth,playerbulletheight))
         bullet[1] -= 5
         if bullet[1] < 0 - playerbulletheight:
-            bulletlist.remove(bullet)
+            playerbullets.remove(bullet)
 
 #-------------------INITIAL LOADING---------------------------------------
 
@@ -175,7 +181,7 @@ def main():
 
         pygame.draw.rect(mainscreen,(0,0,0),(0,0,1000,700))
         mainscreen.blit(player.image, (player.x,player.y))
-        levelrender(current_level,playerbullets,level)
+        levelrender()
         pygame.display.update(0,0,1000,700)
 
 main()
