@@ -147,7 +147,18 @@ def levelrender():
             bullet[0] += randint(-4,3)
         if bullet[1] > 700:
             enemybullets.remove(bullet)
-
+        
+        for bullet in enemybullets:
+            global playerhealth
+            if bullet[0] > player.x:
+                if bullet[0] < player.x + player.width:
+                    if bullet[1] < player.y + player.height:
+                        if bullet[1] > player.y:
+                            pygame.draw.rect(mainscreen,(10,10,10),(0,700,1000,200)) #health/shields bar
+                            pygame.draw.rect(mainscreen,(255,50,0),(50,750,playerhealth*9,100))
+                            pygame.display.update(0,700,1000,200)
+                            playerhealth -= bullet[2]
+                            enemybullets.remove(bullet)
 
 #-------------------INITIAL LOADING AND GAME RESET LOADING---------------------------------------
 
@@ -164,7 +175,8 @@ def firstload():
     mainscreen.fill(black)
     mainscreen.blit(player.image, (player.x,player.y))
     pygame.draw.rect(mainscreen,(0,0,0),(0,0,1000,700)) #main game window
-    pygame.draw.rect(mainscreen,(10,10,10),(0,700,1000,200)) #systems bar
+    pygame.draw.rect(mainscreen,(10,10,10),(0,700,1000,200)) #health/shields bar
+    pygame.draw.rect(mainscreen,(255,50,0),(50,750,playerhealth*9,100))
     pygame.draw.rect(mainscreen,(15,15,15),(1000,0,500,900)) #metadata bar
     mainscreen.blit(title_text.render('SYSTEM', False, (255, 255, 255)),(1010,10,)) # title text
     pygame.display.update()
@@ -221,6 +233,8 @@ def main():
         pygame.draw.rect(mainscreen,(0,0,0),(0,0,1000,700))
         mainscreen.blit(player.image, (player.x,player.y))
         levelrender()
+        if playerhealth <= 0:
+            live = False
         pygame.display.update(0,0,1000,700)
 
 main()
