@@ -1,6 +1,7 @@
 import pygame
 pygame.font.init()
 import os
+from random import randint
 black = (0,0,0)
 WIDTH = 1500
 HEIGHT = 900
@@ -52,6 +53,9 @@ playermaxbullets = 3
 playerbulletwidth = 10
 playerbulletheight= 10
 
+enemybullets = []
+enemybulletwidth = 5
+enemybulletheight = 5
 
 #----LEVEL LOADING----
 def loadlevel(level_list):
@@ -75,14 +79,12 @@ def loadlevel(level_list):
 
 #example spawnpoint = [scout,1],[x,y]
 
-
-level = 1
-
 #----------level renderer, repeat once level has been loaded----------------
 def levelrender():
     global level
     global current_level
     global playerbullets
+    global enemybullets
     if current_level == []:
         level += 1
         if level == 2:
@@ -101,8 +103,13 @@ def levelrender():
         spriterect = [(enemy[1])[0] - sprite.width/2 ,(enemy[1])[1]]
 
         mainscreen.blit(sprite.image, spriterect)
+        if randint(0,200) < (enemy[0])[0]:
+            enemybullets.append([(enemy[1])[0],(enemy[1])[1]+sprite.height,(enemy[0])[0]])
+            if (enemy[0])[0] == 3:
+                for i in range(0,3):
+                    enemybullets.append([(enemy[1])[0],(enemy[1])[1]+sprite.height,(enemy[0])[0]])
 
-        #-----------bullet collision----------
+    #-----------player bullet collision and rendering ----------
         for bullet in playerbullets:
             if bullet[0] > spriterect[0]:
                 if bullet[0] < spriterect[0] + sprite.width:
@@ -118,24 +125,56 @@ def levelrender():
         bullet[1] -= 5
         if bullet[1] < 0 - playerbulletheight:
             playerbullets.remove(bullet)
+    
+#-----enemy bullet rendering-----
 
-#-------------------INITIAL LOADING---------------------------------------
+    for bullet in enemybullets:
+        if bullet[2] == 1:
+            bulletcolour = (255,255,0)
+        elif bullet[2] == 2:
+            bulletcolour = (255,120,0)
+        elif bullet[2] == 3:
+            bulletcolour = (255,0,0)
+
+        pygame.draw.rect(mainscreen,bulletcolour,(bullet[0]-enemybulletwidth/2,bullet[1],enemybulletwidth,enemybulletheight))
+        bullet[1] += 3
+        if bullet[2] == 2:
+            if bullet[0] < player.x + player.width // 2:
+                bullet[0] += 1
+            elif bullet[0] > player.x + player.width // 2:
+                bullet[0] -= 1
+        elif bullet[2] == 3:
+            bullet[0] += randint(-4,3)
+        if bullet[1] > 700:
+            enemybullets.remove(bullet)
+
+
+#-------------------INITIAL LOADING AND GAME RESET LOADING---------------------------------------
 
 #this will probably change to some other load screen
-mainscreen.fill(black)
-mainscreen.blit(player.image, (player.x,player.y))
-pygame.draw.rect(mainscreen,(0,0,0),(0,0,1000,700)) #main game window
-pygame.draw.rect(mainscreen,(10,10,10),(0,700,1000,200)) #systems bar
-pygame.draw.rect(mainscreen,(15,15,15),(1000,0,500,900)) #metadata bar
-mainscreen.blit(title_text.render('SYSTEM', False, (255, 255, 255)),(1010,10,)) # title text
-pygame.display.update()
-current_level = loadlevel([
-    [1,1],[2,1],[1,1],[1,1],[1,1],[1,1],
-    [1,1],[1,1],[1,1],[3,1],[1,1],[1,1],
-    [1,1],[1,1],[1,1],[1,1],[1,1],[2,1],
-    [1,1]
-])
 
+#variable resets
+def firstload():
+    global current_level
+    global level
+    global playerhealth
+    level = 1
+    playerhealth = 100
+
+    mainscreen.fill(black)
+    mainscreen.blit(player.image, (player.x,player.y))
+    pygame.draw.rect(mainscreen,(0,0,0),(0,0,1000,700)) #main game window
+    pygame.draw.rect(mainscreen,(10,10,10),(0,700,1000,200)) #systems bar
+    pygame.draw.rect(mainscreen,(15,15,15),(1000,0,500,900)) #metadata bar
+    mainscreen.blit(title_text.render('SYSTEM', False, (255, 255, 255)),(1010,10,)) # title text
+    pygame.display.update()
+    current_level = loadlevel([
+        [1,1],[2,1],[1,1],[1,1],[1,1],[1,1],
+        [1,1],[1,1],[1,1],[3,1],[1,1],[1,1],
+        [1,1],[1,1],[1,1],[1,1],[1,1],[2,1],
+        [1,1]
+    ])
+firstload()
 
 #---------------------LIVE INPUT, will probably be run at the end of the code-----------------------
 def main():
