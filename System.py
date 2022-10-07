@@ -48,7 +48,7 @@ playerspeed = 5
 
 #----player projectiles----
 playerbullets = []
-playermaxbullets = 100
+playermaxbullets = 3
 playerbulletwidth = 10
 playerbulletheight= 10
 
