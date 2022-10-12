@@ -17,6 +17,25 @@ pygame.display.set_caption("SYSTEM")
 clock = pygame.time.Clock()
 #so the game can run smoothly
 
+#----text generation----
+text_counter = 0
+text = ""
+def printtext():
+    global text_counter
+    global text
+    text_counter += 1
+    pygame.draw.rect(mainscreen,(15,15,15),(1000,100,400,900))
+    mainscreen.blit(main_text.render(text[0:text_counter//5], False, (255, 255, 255)),(1000,150))
+    pygame.display.update(1000,100,400,900)
+
+prompt_counter = 0
+def textprompt():
+    global prompt_counter
+    global text
+    if prompt_counter == 0:
+        prompt_counter += 1
+        text = "welcome to system"
+
 #--------------------------CLASS ASSIGNMENT-----------------------------------------------------
 
 #----enemy class for loading images----
@@ -98,6 +117,10 @@ def levelrender():
         if level == 2:
             level += 1
             current_level = loadlevel([[1,1],[2,1],[1,1],[3,1],[2,1],[1,1],[1,1],[1,1],[2,1],[3,1],[2,1],[1,1],[1,1],[1,1],[2,1],[3,1],[1,1],[2,1],[1,1]])
+        if level == 4:
+            level += 1
+            current_level = loadlevel([[1,1],[2,1],[1,1],[3,1],[2,1],[1,1],[1,1],[1,1],[2,1],[3,1],[2,1],[1,1],[1,1],[1,1],[2,1],[3,1],[1,1],[2,1],[1,1],
+            [1,1],[2,1],[1,1],[3,1],[2,1],[1,1],[1,1],[1,1],[2,1],[3,1],[2,1],[1,1],[1,1],[1,1],[2,1],[3,1],[1,1],[2,1],[1,1]])
 
     for enemy in current_level:
         if (enemy[0])[0] == 1:
@@ -120,6 +143,7 @@ def levelrender():
         if randint(0,len(current_level)^2) < (enemy[0])[0]:
             (enemy[1])[1] += 4 - (enemy[0])[0]
             if (enemy[1])[1] > 700:
+                (enemy[0])[0] += 1
                 (enemy[1])[1] -= 750
 
         #----enemy upgrades----
@@ -166,7 +190,7 @@ def levelrender():
                 bullet[0] -= 1
         elif bullet[2] == 3:
             bullet[0] += randint(-4,3)
-        if bullet[1] > 700:
+        if bullet[1] > 695:
             enemybullets.remove(bullet)
         
         for bullet in enemybullets:
@@ -197,8 +221,8 @@ def firstload():
     pygame.draw.rect(mainscreen,(10,10,10),(0,700,1000,200)) #health/shields bar
     pygame.draw.rect(mainscreen,(255,50,0),(50,750,playerhealth*9,100))
     pygame.draw.rect(mainscreen,(15,15,15),(1000,0,500,900)) #metadata bar
-    mainscreen.blit(title_text.render('SYSTEM', False, (255, 255, 255)),(1010,10,)) # title text
-    mainscreen.blit(main_text.render('Press space to start', False, (255, 255, 255)),(1010,100,)) # title text
+    mainscreen.blit(title_text.render('SYSTEM', False, (255, 255, 255)),(1010,10)) # title text
+    mainscreen.blit(main_text.render('Press space to start', False, (255, 255, 255)),(400,350))
 
 
     pygame.display.update()
@@ -220,13 +244,14 @@ def main():
             if event.type == pygame.KEYDOWN:
                     
                 if event.key == pygame.K_ESCAPE:
-                    pygame.quit
+                    return
                 if event.key == pygame.K_SPACE:
                     live = False
-
     live = True
     while live:
         clock.tick(60)
+        textprompt()
+        printtext()
         for event in pygame.event.get():
             
             if event.type == pygame.QUIT:
