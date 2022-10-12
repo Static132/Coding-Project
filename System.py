@@ -108,6 +108,18 @@ def levelrender():
                 for i in range(0,3):
                     enemybullets.append([(enemy[1])[0],(enemy[1])[1]+sprite.height,(enemy[0])[0]])
 
+        #----enemy slowly move toward player----
+        if randint(0,3*len(current_level)^2) < (enemy[0])[0]:
+            (enemy[1])[1] += 3
+            if (enemy[1])[1] > 700:
+                (enemy[1])[1] -= 750
+        
+        #----enemy upgrades----
+        if randint(0,500*len(current_level)^2) < (enemy[0])[0]:
+            (enemy[0])[0] += 1
+            if (enemy[0])[0] > 3:
+                (enemy[0])[0] = 3
+
     #-----------player bullet collision and rendering ----------
         for bullet in playerbullets:
             if bullet[0] > spriterect[0]:
