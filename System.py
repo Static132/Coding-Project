@@ -23,18 +23,30 @@ text = ""
 def printtext():
     global text_counter
     global text
-    text_counter += 1
+    global score
+    if text_counter < 100:
+        text_counter += 1
     pygame.draw.rect(mainscreen,(15,15,15),(1000,100,400,900))
     mainscreen.blit(main_text.render(text[0:text_counter//5], False, (255, 255, 255)),(1000,150))
+    mainscreen.blit(main_text.render(("your score is "+str(score))[0:text_counter//5], False, (255, 255, 255)),(1000,175))
     pygame.display.update(1000,100,400,900)
 
 prompt_counter = 0
 def textprompt():
     global prompt_counter
     global text
+    global text_counter
     if prompt_counter == 0:
         prompt_counter += 1
         text = "welcome to system"
+    elif prompt_counter == 2:
+        prompt_counter += 1
+        text = "game over"
+        text_counter = 0
+    elif prompt_counter == 4:
+        prompt_counter += 1
+        text = "you win"
+        text_counter = 0
 
 #--------------------------CLASS ASSIGNMENT-----------------------------------------------------
 
@@ -71,8 +83,9 @@ playerspeed = 5
 playerbullets = []
 playermaxbullets = 3
 playerbulletwidth = 10
-playerbulletheight= 10
+playerbulletheight = 10
 powerup = 0
+score = 0
 
 enemybullets = []
 enemybulletwidth = 5
@@ -104,7 +117,7 @@ def loadlevel(level_list):
 def meta_update():
     pygame.draw.rect(mainscreen,(10,10,10),(0,700,1000,200)) #health/shields bar
     pygame.draw.rect(mainscreen,(255,50,0),(50,750,playerhealth*9,100)) #health
-    pygame.draw.rect(mainscreen,(0,205,255),(0,700,333*len(playerbullets),50)) #bullet "charge"
+    pygame.draw.rect(mainscreen,(0,205,255),(0,700,1000-((1000//playermaxbullets)*len(playerbullets)),50)) #bullet "charge"
     pygame.display.update(0,700,1000,200)
 
 def levelrender():
@@ -112,15 +125,21 @@ def levelrender():
     global current_level
     global playerbullets
     global enemybullets
+    global playerhealth
+    global prompt_counter
+    global score
     if current_level == []:
+        playerhealth += 25
         level += 1
         if level == 2:
             level += 1
             current_level = loadlevel([[1,1],[2,1],[1,1],[3,1],[2,1],[1,1],[1,1],[1,1],[2,1],[3,1],[2,1],[1,1],[1,1],[1,1],[2,1],[3,1],[1,1],[2,1],[1,1]])
         if level == 4:
             level += 1
-            current_level = loadlevel([[1,1],[2,1],[1,1],[3,1],[2,1],[1,1],[1,1],[1,1],[2,1],[3,1],[2,1],[1,1],[1,1],[1,1],[2,1],[3,1],[1,1],[2,1],[1,1],
-            [1,1],[2,1],[1,1],[3,1],[2,1],[1,1],[1,1],[1,1],[2,1],[3,1],[2,1],[1,1],[1,1],[1,1],[2,1],[3,1],[1,1],[2,1],[1,1]])
+            current_level = loadlevel([[1,1],[2,1],[1,1],[3,1],[2,1],[1,1],[1,1],[1,1],[2,1],[3,1],[2,1],[1,1],[1,1],[1,1],[2,1],[3,1],[1,1],[2,1],[1,1],[1,1],[2,1],[1,1],[1,1],[1,1],[1,1],
+            [1,1],[1,1],[1,1],[3,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[2,1],[1,1]])
+        if level == 6:
+            prompt_counter = 4
 
     for enemy in current_level:
         if (enemy[0])[0] == 1:
@@ -143,8 +162,12 @@ def levelrender():
         if randint(0,len(current_level)^2) < (enemy[0])[0]:
             (enemy[1])[1] += 4 - (enemy[0])[0]
             if (enemy[1])[1] > 700:
-                (enemy[0])[0] += 1
+                if (enemy[0])[0] < 3:
+                    (enemy[0])[0] += 1
                 (enemy[1])[1] -= 750
+                meta_update()
+        if (enemy[1])[1] > 650:
+            meta_update()
 
         #----enemy upgrades----
         if randint(0,500*len(current_level)^2) < (enemy[0])[0]:
@@ -161,6 +184,7 @@ def levelrender():
                             (enemy[0])[1] -= 1
                             if (enemy[0])[1] == 0:
                                 current_level.remove(enemy)
+                                score += 100*(enemy[0])[0]
                             playerbullets.remove(bullet)
                             meta_update()
 
@@ -194,7 +218,6 @@ def levelrender():
             enemybullets.remove(bullet)
         
         for bullet in enemybullets:
-            global playerhealth
             if bullet[0] > player.x:
                 if bullet[0] < player.x + player.width:
                     if bullet[1] < player.y + player.height:
@@ -212,9 +235,12 @@ def firstload():
     global current_level
     global level
     global playerhealth
+    global playerbullets
+    global enemybullets
     level = 1
     playerhealth = 100
-
+    enemybullets = []
+    playerbullets = []
     mainscreen.fill(black)
     mainscreen.blit(player.image, (player.x,player.y))
     pygame.draw.rect(mainscreen,(0,0,0),(0,0,1000,700)) #main game window
@@ -235,19 +261,11 @@ def firstload():
 firstload()
 
 #---------------------LIVE INPUT, will probably be run at the end of the code-----------------------
-def main():
 
+def main():
+    global prompt_counter
     live = True
-    while live:
-        #press space to start
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                    
-                if event.key == pygame.K_ESCAPE:
-                    return
-                if event.key == pygame.K_SPACE:
-                    live = False
-    live = True
+    meta_update()
     while live:
         clock.tick(60)
         textprompt()
@@ -296,6 +314,28 @@ def main():
         if playerhealth <= 0:
             live = False
         pygame.display.update(0,0,1000,700)
+    prompt_counter = 2
+    firstload()
+    while live == False:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if  event.key == pygame.K_SPACE:
+                    prompt_counter = 0
+                    main()
+                elif event.key == pygame.K_ESCAPE:
+                    return
+        textprompt()
+        player.movex = 0
+        printtext()
+        pygame.display.update(100,0,500,700)
 
-main()
+live = True
+while live:
+    for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                live = False
+            if event.key == pygame.K_SPACE:
+                live = False
+                main()
 pygame.quit
