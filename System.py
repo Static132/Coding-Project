@@ -29,7 +29,7 @@ def printtext():
     pygame.draw.rect(mainscreen,(15,15,15),(1000,100,400,900))
     mainscreen.blit(main_text.render(text[0:text_counter//5], False, (255, 255, 255)),(1000,150))
     mainscreen.blit(main_text.render(("your score is "+str(score))[0:text_counter//5], False, (255, 255, 255)),(1000,175))
-    pygame.display.update(1000,100,400,900)
+    pygame.display.update(1000,100,500,900)
 
 prompt_counter = 0
 def textprompt():
@@ -128,12 +128,16 @@ def levelrender():
     global playerhealth
     global prompt_counter
     global score
+    global playermaxbullets
     if current_level == []:
         playerhealth += 25
+        if playerhealth > 100:
+            playerhealth = 100
         level += 1
         if level == 2:
             level += 1
             current_level = loadlevel([[1,1],[2,1],[1,1],[3,1],[2,1],[1,1],[1,1],[1,1],[2,1],[3,1],[2,1],[1,1],[1,1],[1,1],[2,1],[3,1],[1,1],[2,1],[1,1]])
+            playermaxbullets += 1
         if level == 4:
             level += 1
             current_level = loadlevel([[1,1],[2,1],[1,1],[3,1],[2,1],[1,1],[1,1],[1,1],[2,1],[3,1],[2,1],[1,1],[1,1],[1,1],[2,1],[3,1],[1,1],[2,1],[1,1],[1,1],[2,1],[1,1],[1,1],[1,1],[1,1],
