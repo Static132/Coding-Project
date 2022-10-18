@@ -81,9 +81,9 @@ playerspeed = 5
 
 #----player projectiles----
 playerbullets = []
-playermaxbullets = 3
 playerbulletwidth = 10
 playerbulletheight = 10
+playermaxbullets = 3
 powerup = 0
 score = 0
 
@@ -133,6 +133,7 @@ def levelrender():
         playerhealth += 25
         if playerhealth > 100:
             playerhealth = 100
+            meta_update()
         level += 1
         if level == 2:
             level += 1
@@ -162,16 +163,15 @@ def levelrender():
                 for i in range(0,3):
                     enemybullets.append([(enemy[1])[0],(enemy[1])[1]+sprite.height,(enemy[0])[0]])
 
-        #----enemy slowly move toward player----
+        #----enemy slowly move toward player, then close into the middle of the screen----
         if randint(0,len(current_level)^2) < (enemy[0])[0]:
-            (enemy[1])[1] += 4 - (enemy[0])[0]
-            if (enemy[1])[1] > 700:
-                if (enemy[0])[0] < 3:
-                    (enemy[0])[0] += 1
-                (enemy[1])[1] -= 750
-                meta_update()
-        if (enemy[1])[1] > 650:
-            meta_update()
+            if (enemy[1])[1] < 500:
+                (enemy[1])[1] += 6 - (enemy[0])[0]
+            else:
+                if (enemy[1])[0] < 500:
+                    (enemy[1])[0] += 4 - (enemy[0])[0]
+                else:
+                    (enemy[1])[0] -= 4 - (enemy[0])[0]
 
         #----enemy upgrades----
         if randint(0,500*len(current_level)^2) < (enemy[0])[0]:
@@ -241,9 +241,13 @@ def firstload():
     global playerhealth
     global playerbullets
     global enemybullets
+    global playermaxbullets
+    global score
     level = 1
+    score = 0
     playerhealth = 100
     enemybullets = []
+    playermaxbullets = 3
     playerbullets = []
     mainscreen.fill(black)
     mainscreen.blit(player.image, (player.x,player.y))
