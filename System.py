@@ -243,9 +243,7 @@ def firstload():
     global playerbullets
     global enemybullets
     global playermaxbullets
-    global score
     level = 1
-    score = 0
     playerhealth = 100
     enemybullets = []
     playermaxbullets = 3
@@ -273,6 +271,7 @@ firstload()
 
 def main():
     global prompt_counter
+    global score
     live = True
     meta_update()
     while live:
@@ -330,6 +329,7 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if  event.key == pygame.K_SPACE:
                     prompt_counter = 0
+                    score = 0
                     main()
                 elif event.key == pygame.K_ESCAPE:
                     return
