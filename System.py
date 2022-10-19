@@ -129,7 +129,7 @@ def levelrender():
     global prompt_counter
     global score
     global playermaxbullets
-    if current_level == []:
+    if current_level == []: #checks if the level is complete and loads the next level if so
         playerhealth += 25
         if playerhealth > 100:
             playerhealth = 100
@@ -146,6 +146,7 @@ def levelrender():
         if level == 6:
             prompt_counter = 4
 
+    #-----enemy rendering and firing bullets-----
     for enemy in current_level:
         if (enemy[0])[0] == 1:
             sprite = scout
