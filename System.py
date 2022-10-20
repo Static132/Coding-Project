@@ -347,4 +347,5 @@ while live:
             if event.key == pygame.K_SPACE:
                 live = False
                 main()
+
 pygame.quit
