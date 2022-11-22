@@ -7,7 +7,7 @@ HEIGHT = 500
 mainscreen = pygame.display.set_mode((WIDTH,HEIGHT))
 #sets the width and height of the game
 
-pygame.display.set_caption("Beep Blaster")
+pygame.display.set_caption("Test")
 #sets the name of the window
 #set_caption can also be set_icon
 
